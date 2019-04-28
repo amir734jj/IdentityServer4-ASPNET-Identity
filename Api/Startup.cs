@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using Api.Attributes;
@@ -7,6 +8,7 @@ using AutoMapper;
 using AutoMapper.EntityFrameworkCore;
 using AutoMapper.EquivalencyExpression;
 using Dal;
+using IdentityServer4;
 using IdentityServer4.Models;
 using Lamar;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -29,6 +31,85 @@ namespace Api
         private readonly IConfigurationRoot _configuration;
 
         private readonly IHostingEnvironment _env;
+        
+        public static IEnumerable<Client> GetClients()
+        {
+            return new List<Client>
+            {
+                new Client
+                {
+                    ClientId = "client",
+
+                    // no interactive user, use the clientid/secret for authentication
+                    AllowedGrantTypes = GrantTypes.ClientCredentials,
+
+                    // secret for authentication
+                    ClientSecrets =
+                    {
+                        new Secret("secret".Sha256())
+                    },
+
+                    // scopes that client has access to
+                    AllowedScopes = { "api1" }
+                },
+                // resource owner password grant client
+                new Client
+                {
+                    ClientId = "ro.client",
+                    AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
+
+                    ClientSecrets =
+                    {
+                        new Secret("secret".Sha256())
+                    },
+                    AllowedScopes = { "api1" }
+                },
+                // OpenID Connect hybrid flow client (MVC)
+                new Client
+                {
+                    ClientId = "mvc",
+                    ClientName = "MVC Client",
+                    AllowedGrantTypes = GrantTypes.Hybrid,
+
+                    ClientSecrets =
+                    {
+                        new Secret("secret".Sha256())
+                    },
+
+                    RedirectUris           = { "http://localhost:5002/signin-oidc" },
+                    PostLogoutRedirectUris = { "http://localhost:5002/signout-callback-oidc" },
+
+                    AllowedScopes =
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        "api1"
+                    },
+
+                    AllowOfflineAccess = true
+                },
+                // JavaScript Client
+                new Client
+                {
+                    ClientId = "js",
+                    ClientName = "JavaScript Client",
+                    AllowedGrantTypes = GrantTypes.Code,
+                    RequirePkce = true,
+                    RequireClientSecret = false,
+
+                    RedirectUris =           { "http://localhost:5003/callback.html" },
+                    PostLogoutRedirectUris = { "http://localhost:5003/index.html" },
+                    AllowedCorsOrigins =     { "http://localhost:5003" },
+
+                    AllowedScopes =
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        "api1"
+                    }
+                }
+            };
+        }
 
         /// <summary>
         /// Constructor
@@ -55,32 +136,6 @@ namespace Api
         public void ConfigureContainer(ServiceRegistry services)
         {
             services.AddLogging();
-
-            var jwtSettings = new JwtSettings();
-            var section = _configuration.GetSection("JwtSettings");
-            section.Bind(jwtSettings);
-            services.Configure<JwtSettings>(section);
-            
-            services
-                .AddAuthentication(x =>
-                {
-                    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, x =>
-                {
-                    x.RequireHttpsMetadata = false;
-                    x.SaveToken = true;
-                    x.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidIssuer = jwtSettings.Issuer,
-                        ValidAudience = jwtSettings.Audience,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key)),
-                        ValidateIssuerSigningKey = true,
-                        ValidateLifetime = true,
-                        ClockSkew = TimeSpan.Zero // the default for this setting is 5 minutes
-                    };
-                });
 
             // If environment is localhost, then enable CORS policy, otherwise no cross-origin access
             services.AddCors(options =>
@@ -139,15 +194,19 @@ namespace Api
                     new IdentityResources.OpenId(),
                     new IdentityResources.Profile()
                 })
-                .AddInMemoryApiResources(new []{ new ApiResource("api1", "My API #1") })
-                .AddAspNetIdentity<EntityDbContext>();
+                .AddInMemoryApiResources(new[] {new ApiResource("api1", "My API #1")})
+                .AddAspNetIdentity<User>()
+                .AddInMemoryClients(GetClients());
 
             if (_env.IsDevelopment())
             {
                 identityServerBuilderbuilder.AddDeveloperSigningCredential();
             }
 
-            services.AddAuthentication();
+            services.AddAuthentication(opt =>
+            {
+                
+            });
             
             services.AddSwaggerGen(opt =>
             {
@@ -189,10 +248,11 @@ namespace Api
                 app.UseDatabaseErrorPage();
             }
 
+
             app.UseStaticFiles();
             app.UseIdentityServer();
             app.UseMvcWithDefaultRoute();
-
+            
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
 
