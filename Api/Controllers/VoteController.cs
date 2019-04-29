@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Logic.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Api.Controllers
 {
@@ -19,6 +20,7 @@ namespace Api.Controllers
         
         [HttpPost]
         [Route("UpVote/{id}")]
+        [SwaggerOperation("UpVote")]
         public async Task<IActionResult> UpVote([FromRoute] Guid id)
         {
             await _voteLogic.UpVote(id);
@@ -28,6 +30,7 @@ namespace Api.Controllers
         
         [HttpPost]
         [Route("DownVote/{id}")]
+        [SwaggerOperation("DownVote")]
         public async Task<IActionResult> DownVote([FromRoute] Guid id)
         {
             await _voteLogic.DownVote(id);

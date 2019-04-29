@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Logic.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace API.Abstracts
 {
@@ -14,6 +15,7 @@ namespace API.Abstracts
         [HttpGet]
         [Route("")]
         [ProducesResponseType(typeof(List<>), 200)]
+        [SwaggerOperation("GetAll")]
         public virtual async Task<IActionResult> GetAll()
         {
             return Ok(await BasicCrudLogic().GetAll());
@@ -21,6 +23,7 @@ namespace API.Abstracts
 
         [HttpGet]
         [Route("{id}")]
+        [SwaggerOperation("Get")]
         public virtual async Task<IActionResult> Get([FromRoute] Guid id)
         {
             return Ok(await BasicCrudLogic().Get(id));
@@ -28,6 +31,7 @@ namespace API.Abstracts
 
         [HttpPut]
         [Route("{id}")]
+        [SwaggerOperation("Update")]
         public virtual async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] T instance)
         {
             return Ok(await BasicCrudLogic().Update(id, instance));
@@ -35,6 +39,7 @@ namespace API.Abstracts
 
         [HttpDelete]
         [Route("{id}")]
+        [SwaggerOperation("Delete")]
         public virtual async Task<IActionResult> Delete([FromRoute] Guid id)
         {
             return Ok(await BasicCrudLogic().Delete(id));
@@ -42,6 +47,7 @@ namespace API.Abstracts
         
         [HttpPost]
         [Route("")]
+        [SwaggerOperation("Save")]
         public virtual async Task<IActionResult> Save([FromBody] T instance)
         {
             return Ok(await BasicCrudLogic().Save(instance));

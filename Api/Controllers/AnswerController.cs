@@ -4,6 +4,7 @@ using Logic.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Api.Controllers
 {
@@ -20,6 +21,7 @@ namespace Api.Controllers
 
         [HttpPost]
         [Route("{id}")]
+        [SwaggerOperation("SubmitAnswer")]
         public async Task<IActionResult> SubmitAnswer([FromRoute] Guid id, [FromBody] Answer answer)
         {
             await _answerLogic.SubmitAnswer(id, answer);

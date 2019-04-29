@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Text;
-using Api.Attributes;
 using Api.Configs;
 using AutoMapper;
 using AutoMapper.EntityFrameworkCore;
 using AutoMapper.EquivalencyExpression;
 using Dal;
-using IdentityServer4;
-using IdentityServer4.Models;
 using Lamar;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -30,86 +26,7 @@ namespace Api
     {
         private readonly IConfigurationRoot _configuration;
 
-        private readonly IHostingEnvironment _env;
-        
-        public static IEnumerable<Client> GetClients()
-        {
-            return new List<Client>
-            {
-                new Client
-                {
-                    ClientId = "client",
-
-                    // no interactive user, use the clientid/secret for authentication
-                    AllowedGrantTypes = GrantTypes.ClientCredentials,
-
-                    // secret for authentication
-                    ClientSecrets =
-                    {
-                        new Secret("secret".Sha256())
-                    },
-
-                    // scopes that client has access to
-                    AllowedScopes = { "api1" }
-                },
-                // resource owner password grant client
-                new Client
-                {
-                    ClientId = "ro.client",
-                    AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
-
-                    ClientSecrets =
-                    {
-                        new Secret("secret".Sha256())
-                    },
-                    AllowedScopes = { "api1" }
-                },
-                // OpenID Connect hybrid flow client (MVC)
-                new Client
-                {
-                    ClientId = "mvc",
-                    ClientName = "MVC Client",
-                    AllowedGrantTypes = GrantTypes.Hybrid,
-
-                    ClientSecrets =
-                    {
-                        new Secret("secret".Sha256())
-                    },
-
-                    RedirectUris           = { "http://localhost:5002/signin-oidc" },
-                    PostLogoutRedirectUris = { "http://localhost:5002/signout-callback-oidc" },
-
-                    AllowedScopes =
-                    {
-                        IdentityServerConstants.StandardScopes.OpenId,
-                        IdentityServerConstants.StandardScopes.Profile,
-                        "api1"
-                    },
-
-                    AllowOfflineAccess = true
-                },
-                // JavaScript Client
-                new Client
-                {
-                    ClientId = "js",
-                    ClientName = "JavaScript Client",
-                    AllowedGrantTypes = GrantTypes.Code,
-                    RequirePkce = true,
-                    RequireClientSecret = false,
-
-                    RedirectUris =           { "http://localhost:5003/callback.html" },
-                    PostLogoutRedirectUris = { "http://localhost:5003/index.html" },
-                    AllowedCorsOrigins =     { "http://localhost:5003" },
-
-                    AllowedScopes =
-                    {
-                        IdentityServerConstants.StandardScopes.OpenId,
-                        IdentityServerConstants.StandardScopes.Profile,
-                        "api1"
-                    }
-                }
-            };
-        }
+        public readonly IHostingEnvironment _env;
 
         /// <summary>
         /// Constructor
@@ -168,46 +85,39 @@ namespace Api
 
             services.AddDbContext<EntityDbContext>();
 
+            // Configure Entity Framework Identity for Auth
             services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<EntityDbContext>()
-                .AddDefaultTokenProviders()
-                .AddClaimsPrincipalFactory<CustomUserClaimsPrincipalFactory>();
-            
-            services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_1);
+                .AddDefaultTokenProviders();
 
-            services.Configure<IISOptions>(iis =>
+            services.AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(config =>
+                {
+                    config.RequireHttpsMetadata = false;
+                    config.SaveToken = true;
+
+                    config.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidIssuer = _configuration.GetValue<string>("JwtSettings:Issuer"),
+                        ValidAudience = _configuration.GetValue<string>("JwtSettings:Issuer"),
+                        IssuerSigningKey =
+                            new SymmetricSecurityKey(
+                                Encoding.UTF8.GetBytes(_configuration.GetValue<string>("JwtSettings:Key")))
+                    };
+                });
+
+            services.Configure<JwtSettings>(_configuration.GetSection("JwtSettings"));
+
+            // Add framework services
+            services.AddMvc().AddJsonOptions(options =>
             {
-                iis.AuthenticationDisplayName = "Windows";
-                iis.AutomaticAuthentication = false;
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             });
 
-            var identityServerBuilderbuilder = services
-                .AddIdentityServer(opt =>
-                {
-                    opt.Events.RaiseErrorEvents = true;
-                    opt.Events.RaiseInformationEvents = true;
-                    opt.Events.RaiseFailureEvents = true;
-                    opt.Events.RaiseSuccessEvents = true;
-                })
-                .AddInMemoryIdentityResources(new IdentityResource[]
-                {
-                    new IdentityResources.OpenId(),
-                    new IdentityResources.Profile()
-                })
-                .AddInMemoryApiResources(new[] {new ApiResource("api1", "My API #1")})
-                .AddAspNetIdentity<User>()
-                .AddInMemoryClients(GetClients());
-
-            if (_env.IsDevelopment())
-            {
-                identityServerBuilderbuilder.AddDeveloperSigningCredential();
-            }
-
-            services.AddAuthentication(opt =>
-            {
-                
-            });
-            
             services.AddSwaggerGen(opt =>
             {
                 opt.SwaggerDoc("v1", new Info
@@ -249,10 +159,20 @@ namespace Api
             }
 
 
+            app.UseDefaultFiles();
             app.UseStaticFiles();
-            app.UseIdentityServer();
-            app.UseMvcWithDefaultRoute();
-            
+
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                // Read and use headers coming from reverse proxy: X-Forwarded-For X-Forwarded-Proto
+                // This is particularly important so that HttpContet.Request.Scheme will be correct behind a SSL terminating proxy
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor |
+                                   ForwardedHeaders.XForwardedProto
+            });
+
+            app.UseAuthentication();
+            app.UseMvc();
+
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
 
