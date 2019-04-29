@@ -86,7 +86,10 @@ namespace Api
             services.AddDbContext<EntityDbContext>();
 
             // Configure Entity Framework Identity for Auth
-            services.AddIdentity<User, IdentityRole>()
+            services.AddIdentity<User, IdentityRole>(x =>
+                {
+                    x.User.RequireUniqueEmail = true;
+                })
                 .AddEntityFrameworkStores<EntityDbContext>()
                 .AddDefaultTokenProviders();
 

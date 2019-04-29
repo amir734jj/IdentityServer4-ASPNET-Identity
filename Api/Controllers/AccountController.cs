@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Api.Configs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -33,9 +34,9 @@ namespace Api.Controllers
         [Route("")]
         [SwaggerOperation("AccountInfo")]
         public async Task<IActionResult> Index()
-        {
+        {            
             return User.Identity.IsAuthenticated
-                ? Ok(await _userManager.GetUserAsync(User))
+                ? Ok(await _userManager.FindByEmailAsync(User.Identity.Name))
                 : Ok(new object());
         }
 
@@ -52,7 +53,13 @@ namespace Api.Controllers
         [SwaggerOperation("Register")]
         public async Task<IActionResult> Register([FromBody] RegisterViewModel registerViewModel)
         {
-            var user = new User { UserName = registerViewModel.Username, Email = registerViewModel.Email };
+            var user = new User
+            {
+                Fullname = registerViewModel.Fullname,
+                UserName = registerViewModel.Username,
+                Email = registerViewModel.Email
+            };
+            
             var result = await _userManager.CreateAsync(user, registerViewModel.Password);
             
             return result.Succeeded ? (IActionResult) Ok("Successfully registerd!") : BadRequest("Failed to register!");
@@ -83,6 +90,8 @@ namespace Api.Controllers
                     error_description = "The username or password is invalid."
                 });
             }
+
+            await _signManager.SignInAsync(user, true);
 
             // Generate and issue a JWT token
             var claims = new [] {
