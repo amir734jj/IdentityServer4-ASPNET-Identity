@@ -33,7 +33,7 @@ namespace Dal.Tests
             mockSet.As<IQueryable<Question>>().Setup(m => m.ElementType).Returns(questions.ElementType);
             mockSet.As<IQueryable<Question>>().Setup(m => m.GetEnumerator()).Returns(questions.GetEnumerator());
 
-            var entityDbContextMock = new Mock<EntityDbContext>();
+            var entityDbContextMock = new Mock<EntityDbContext> { CallBase =  true };
 
             entityDbContextMock.Setup(x => x.Questions).Returns(mockSet.Object);
 

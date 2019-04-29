@@ -35,7 +35,7 @@ namespace Api.Controllers
         public async Task<IActionResult> Index()
         {
             return User.Identity.IsAuthenticated
-                ? Ok(await _userManager.GetUserAsync(HttpContext.User))
+                ? Ok(await _userManager.GetUserAsync(User))
                 : Ok(new object());
         }
 
@@ -101,7 +101,7 @@ namespace Api.Controllers
                 expires: DateTime.Now.AddMinutes(_jwtSettings.Value.AccessTokenDurationInMinutes),
                 signingCredentials: creds);
 
-            return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
+            return Ok(new JwtSecurityTokenHandler().WriteToken(token));
         }
 
         [HttpGet]
