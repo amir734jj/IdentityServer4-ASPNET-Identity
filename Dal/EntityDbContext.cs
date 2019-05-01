@@ -1,21 +1,14 @@
 using System;
+using Dal.DbContext;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Models.Models;
 
 namespace Dal
 {
-    public sealed class EntityDbContext : IdentityDbContext<User>
+    public sealed class EntityDbContext : IdentityDbContext<User>, IEntityContext
     {
         private readonly Action<DbContextOptionsBuilder> _dbContextOptionsBuilderAction;
-
-        /// <summary>
-        /// For unit testing
-        /// </summary>
-        public EntityDbContext()
-        {
-            
-        }
         
         /// <inheritdoc />
         /// <summary>
@@ -28,7 +21,6 @@ namespace Dal
             _dbContextOptionsBuilderAction = dbContextOptionsBuilderAction;
 
             Database.EnsureCreated();
-            Database.Migrate();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

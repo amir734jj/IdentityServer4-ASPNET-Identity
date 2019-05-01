@@ -5,6 +5,7 @@ using AutoMapper;
 using AutoMapper.EntityFrameworkCore;
 using AutoMapper.EquivalencyExpression;
 using Dal;
+using Dal.DbContext;
 using Lamar;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -144,6 +145,8 @@ namespace Api
             services.For<ILoggerFactory>().Use(NullLoggerFactory.Instance);
 
             services.For<IConfigurationRoot>().Use(_ => _configuration);
+
+            services.For<IEntityContext>().Use<EntityDbContext>();
         }
 
         /// <summary>

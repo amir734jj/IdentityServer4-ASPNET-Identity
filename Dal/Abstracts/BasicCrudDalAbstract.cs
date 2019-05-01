@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.EntityFrameworkCore;
+using Dal.DbContext;
 using Dal.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Models.Interfaces;
@@ -22,7 +23,7 @@ namespace DAL.Abstracts
         /// Abstract to get database context
         /// </summary>
         /// <returns></returns>
-        protected abstract DbContext GetDbContext();
+        protected abstract IEntityContext GetDbContext();
         
         /// <summary>
         /// Abstract to get entity set
@@ -36,7 +37,7 @@ namespace DAL.Abstracts
         /// <returns></returns>
         public virtual async Task<IEnumerable<T>> GetAll()
         {
-            return await DbSetInclude().ToListAsync();
+            return await GetDbSet().ToListAsync();
         }
 
         /// <summary>

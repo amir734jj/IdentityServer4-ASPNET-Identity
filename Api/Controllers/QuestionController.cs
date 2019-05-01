@@ -1,3 +1,5 @@
+
+
 using System;
 using System.Threading.Tasks;
 using API.Abstracts;
@@ -34,18 +36,18 @@ namespace Api.Controllers
         }
 
         [Authorize]
-        public override async Task<IActionResult> Save(Question instance)
+        public override async Task<IActionResult> Save([FromBody] Question instance)
         {
-            instance.UserRef = await _userManager.GetUserAsync(HttpContext.User);
+            instance.UserRef = await _userManager.FindByEmailAsync(User.Identity.Name);
 
             return await base.Save(instance);
         }
 
         [Authorize]
-        public override async Task<IActionResult> Update(Guid id, Question instance)
+        public override async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] Question instance)
         {
             var question = await _questionLogic.Get(id);
-            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
 
             return question.UserRef == user
                 ? await base.Update(id, instance)
@@ -53,10 +55,10 @@ namespace Api.Controllers
         }
 
         [Authorize]
-        public override async Task<IActionResult> Delete(Guid id)
+        public override async Task<IActionResult> Delete([FromRoute] Guid id)
         {
             var question = await _questionLogic.Get(id);
-            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
 
             return question.UserRef == user
                 ? await base.Delete(id)
