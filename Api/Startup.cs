@@ -122,12 +122,14 @@ namespace Api
             services.Configure<JwtSettings>(_configuration.GetSection("JwtSettings"));
 
             services.AddSignalR();
-            
+
             // Add framework services
-            services.AddMvc(opt => { opt.Filters.Add<ExceptionFilterAttribute>(); }).AddJsonOptions(options =>
-            {
-                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-            });
+            services
+                .AddMvc(opt => { opt.Filters.Add<ExceptionFilterAttribute>(); })
+                .AddJsonOptions(opt =>
+                {
+                    opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                });
 
             services.AddSwaggerGen(opt =>
             {
@@ -172,7 +174,7 @@ namespace Api
             {
                 populateDbLogic.Populate().Wait();
             }
-            
+
             app.UseCors("CorsPolicy");
 
             if (env.IsDevelopment())
@@ -193,9 +195,9 @@ namespace Api
             });
 
             app.UseAuthentication();
-            
+
             app.UseMvc();
-            
+
             app.UseSignalR(route => { route.MapHub<MessageHub>("/chat"); });
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
