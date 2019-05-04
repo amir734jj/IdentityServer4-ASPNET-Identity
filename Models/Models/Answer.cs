@@ -17,8 +17,5 @@ namespace Models.Models
         
         [JsonIgnore]
         public Question QuestionRef { get; set; }
-        
-        [JsonIgnore]
-        public User UserRef { get; set; }
     }
 }

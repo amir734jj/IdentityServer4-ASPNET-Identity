@@ -2,10 +2,9 @@
 
 using System;
 using System.Threading.Tasks;
-using API.Abstracts;
+using Api.Abstracts;
 using Logic.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Models.Models;
 
@@ -15,11 +14,9 @@ namespace Api.Controllers
     public class QuestionController : AbstractBasicCrudController<Question>
     {
         private readonly IQuestionLogic _questionLogic;
-        private readonly UserManager<User> _userManager;
 
-        public QuestionController(UserManager<User> userManager, IQuestionLogic questionLogic)
+        public QuestionController(IQuestionLogic questionLogic)
         {
-            _userManager = userManager;
             _questionLogic = questionLogic;
         }
 
@@ -38,31 +35,19 @@ namespace Api.Controllers
         [Authorize]
         public override async Task<IActionResult> Save([FromBody] Question instance)
         {
-            instance.UserRef = await _userManager.FindByEmailAsync(User.Identity.Name);
-
             return await base.Save(instance);
         }
 
         [Authorize]
         public override async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] Question instance)
         {
-            var question = await _questionLogic.Get(id);
-            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
-
-            return question.UserRef == user
-                ? await base.Update(id, instance)
-                : BadRequest("Only question author can update the question!");
+            return await base.Update(id, instance);
         }
 
         [Authorize]
         public override async Task<IActionResult> Delete([FromRoute] Guid id)
         {
-            var question = await _questionLogic.Get(id);
-            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
-
-            return question.UserRef == user
-                ? await base.Delete(id)
-                : BadRequest("Only question author can delete the question!");
+            return await base.Delete(id);
         }
 
         protected override IBasicCrudLogic<Question> BasicCrudLogic()

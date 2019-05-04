@@ -4,12 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.EntityFrameworkCore;
-using Dal.DbContext;
 using Dal.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Models.Interfaces;
 
-namespace DAL.Abstracts
+namespace Dal.Abstracts
 {
     public abstract class BasicCrudDalAbstract<T> : IBasicCrudDal<T> where T : class, IEntity
     {
@@ -23,7 +22,7 @@ namespace DAL.Abstracts
         /// Abstract to get database context
         /// </summary>
         /// <returns></returns>
-        protected abstract IEntityContext GetDbContext();
+        protected abstract EntityDbContext GetDbContext();
         
         /// <summary>
         /// Abstract to get entity set
@@ -37,7 +36,7 @@ namespace DAL.Abstracts
         /// <returns></returns>
         public virtual async Task<IEnumerable<T>> GetAll()
         {
-            return await GetDbSet().ToListAsync();
+            return await DbSetInclude().ToListAsync();
         }
 
         /// <summary>
@@ -95,6 +94,7 @@ namespace DAL.Abstracts
         {                
             if (instance != null)
             {
+                // GetDbContext().Entry(instance).State = EntityState.Modified;
                 GetDbSet().Persist(GetMapper()).InsertOrUpdate(instance);
 
                 // Save and dispose

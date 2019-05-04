@@ -33,7 +33,7 @@ namespace Api.Controllers
         [Route("")]
         [SwaggerOperation("AccountInfo")]
         public async Task<IActionResult> Index()
-        {            
+        {
             return User.Identity.IsAuthenticated
                 ? Ok(await _userManager.FindByEmailAsync(User.Identity.Name))
                 : Ok(new object());

@@ -1,12 +1,12 @@
 using System;
-using Dal.DbContext;
+using Dal.Interfaces;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Models.Models;
 
 namespace Dal
 {
-    public sealed class EntityDbContext : IdentityDbContext<User>, IEntityContext
+    public sealed class EntityDbContext : IdentityDbContext<User>
     {
         private readonly Action<DbContextOptionsBuilder> _dbContextOptionsBuilderAction;
         
@@ -30,16 +30,6 @@ namespace Dal
         
         protected override void  OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<User>()
-                .HasMany(x => x.Answers)
-                .WithOne(x => x.UserRef)
-                .OnDelete(DeleteBehavior.SetNull);
-            
-            modelBuilder.Entity<User>()
-                .HasMany(x => x.Questions)
-                .WithOne(x => x.UserRef)
-                .OnDelete(DeleteBehavior.SetNull);
-            
             modelBuilder.Entity<Question>()
                 .HasMany(x => x.Tags)
                 .WithOne(x => x.QuestionRef)

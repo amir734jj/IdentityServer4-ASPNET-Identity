@@ -25,12 +25,12 @@ namespace Dal.Tests
         [Fact]
         public async Task Test__GetAll()
         {
+            
             // Arrange
             var question = _fixture
                 .Build<Question>()
                 .Without(x => x.Answers)
                 .Without(x => x.Tags)
-                .Without(x => x.UserRef)
                 .Create();
             
             var questionDal = new QuestionDal(_dbContext, _mapper);

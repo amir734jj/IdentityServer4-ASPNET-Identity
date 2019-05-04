@@ -1,8 +1,7 @@
 using System.Linq;
 using AutoMapper;
-using Dal.DbContext;
+using Dal.Abstracts;
 using Dal.Interfaces;
-using DAL.Abstracts;
 using Microsoft.EntityFrameworkCore;
 using Models.Models;
 
@@ -10,11 +9,11 @@ namespace Dal.Dals
 {
     public class QuestionDal : BasicCrudDalAbstract<Question>, IQuestionDal
     {   
-        private readonly IEntityContext _dbContext;
+        private readonly EntityDbContext _dbContext;
 
         private readonly IMapper _mapper;
 
-        public QuestionDal(IEntityContext dbContext, IMapper mapper)
+        public QuestionDal(EntityDbContext dbContext, IMapper mapper)
         {
             _dbContext = dbContext;
             _mapper = mapper;
@@ -25,7 +24,7 @@ namespace Dal.Dals
             return _mapper;
         }
 
-        protected override IEntityContext GetDbContext()
+        protected override EntityDbContext GetDbContext()
         {
             return _dbContext;
         }
@@ -38,7 +37,6 @@ namespace Dal.Dals
         protected override IQueryable<Question> DbSetInclude()
         {
             return base.DbSetInclude()
-                .Include(x => x.UserRef)
                 .Include(x => x.Tags)
                 .Include(x => x.Answers);
         }

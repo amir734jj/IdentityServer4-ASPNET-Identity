@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Models.Interfaces;
-using Newtonsoft.Json;
 
 namespace Models.Models
 {
@@ -25,8 +24,5 @@ namespace Models.Models
         public int Vote { get; set; }
 
         public DateTime Time { get; set; }
-        
-        [JsonIgnore]
-        public User UserRef { get; set; }
     }
 }

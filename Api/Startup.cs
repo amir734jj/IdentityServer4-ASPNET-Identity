@@ -1,12 +1,18 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
+using Api.Attributes;
 using Api.Configs;
 using AutoMapper;
 using AutoMapper.EntityFrameworkCore;
 using AutoMapper.EquivalencyExpression;
 using Dal;
-using Dal.DbContext;
+using Dal.Interfaces;
 using Lamar;
+using Logic;
+using Logic.PopulateDb;
+using Logic.PopulateDb.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -19,6 +25,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.IdentityModel.Tokens;
 using Models.Models;
+using RestSharp;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace Api
@@ -27,7 +34,8 @@ namespace Api
     {
         private readonly IConfigurationRoot _configuration;
 
-        public readonly IHostingEnvironment _env;
+        // ReSharper disable once NotAccessedField.Local
+        private readonly IHostingEnvironment _env;
 
         /// <summary>
         /// Constructor
@@ -87,10 +95,7 @@ namespace Api
             services.AddDbContext<EntityDbContext>();
 
             // Configure Entity Framework Identity for Auth
-            services.AddIdentity<User, IdentityRole>(x =>
-                {
-                    x.User.RequireUniqueEmail = true;
-                })
+            services.AddIdentity<User, IdentityRole>(x => { x.User.RequireUniqueEmail = true; })
                 .AddEntityFrameworkStores<EntityDbContext>()
                 .AddDefaultTokenProviders();
 
@@ -116,8 +121,10 @@ namespace Api
 
             services.Configure<JwtSettings>(_configuration.GetSection("JwtSettings"));
 
+            services.AddSignalR();
+            
             // Add framework services
-            services.AddMvc().AddJsonOptions(options =>
+            services.AddMvc(opt => { opt.Filters.Add<ExceptionFilterAttribute>(); }).AddJsonOptions(options =>
             {
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             });
@@ -146,7 +153,11 @@ namespace Api
 
             services.For<IConfigurationRoot>().Use(_ => _configuration);
 
-            services.For<IEntityContext>().Use<EntityDbContext>();
+            // Register DBContext
+//             services.For<IEntityContext>().Use(entityDbContext);
+
+            // StackOverFlow RestSharp client
+            services.For<IRestClient>().Use(_ => new RestClient(new Uri("https://api.stackexchange.com/")));
         }
 
         /// <summary>
@@ -154,8 +165,14 @@ namespace Api
         /// </summary>
         /// <param name="app"></param>
         /// <param name="env"></param>
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IPopulateDbLogic populateDbLogic)
         {
+            // Populate the DB if flag is set to true in appsettings.json
+            if (_configuration.GetValue<bool>("PopulateDb"))
+            {
+                populateDbLogic.Populate().Wait();
+            }
+            
             app.UseCors("CorsPolicy");
 
             if (env.IsDevelopment())
@@ -163,7 +180,6 @@ namespace Api
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
             }
-
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
@@ -177,7 +193,10 @@ namespace Api
             });
 
             app.UseAuthentication();
+            
             app.UseMvc();
+            
+            app.UseSignalR(route => { route.MapHub<MessageHub>("/chat"); });
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();

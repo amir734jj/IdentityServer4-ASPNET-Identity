@@ -5,7 +5,7 @@ using Logic.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace API.Abstracts
+namespace Api.Abstracts
 {
     public abstract class AbstractBasicCrudController<T> : Controller
     {
