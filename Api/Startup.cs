@@ -24,6 +24,7 @@ using Microsoft.IdentityModel.Tokens;
 using Models.Models;
 using RestSharp;
 using Swashbuckle.AspNetCore.Swagger;
+using static Api.Utilities.ConnectionStringUtility;
 
 namespace Api
 {
@@ -73,9 +74,28 @@ namespace Api
                     });
             });
 
+            // Initialize the DbContext
             var entityDbContext = new EntityDbContext(opt =>
             {
-                opt.UseSqlite(_configuration.GetValue<string>("ConnectionStrings:Sqlite"));
+                switch (_env.EnvironmentName)
+                {
+                    // If Development then use Sqlite
+                    case "Development":
+                        opt.UseSqlite(_configuration.GetValue<string>("ConnectionStrings:Sqlite"));
+                        break;
+                    case "Production":
+                        // Database Url
+                        var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+
+                        // Create postgres specific connection string
+                        var connectionString = ConnectionStringUrlToResource(databaseUrl);
+
+                        // Initialize postgres
+                        opt.UseNpgsql(connectionString);
+                        break;
+                    default:
+                        throw new Exception("Invalid Environment!");
+                }
             });
 
             services.For<EntityDbContext>().Use(entityDbContext).Transient();
@@ -95,11 +115,11 @@ namespace Api
             services.AddIdentity<User, IdentityRole>(x => { x.User.RequireUniqueEmail = true; })
                 .AddEntityFrameworkStores<EntityDbContext>()
                 .AddDefaultTokenProviders();
-            
+
             var jwtSetting = new JwtSettings();
 
             var jwtConfigSection = _configuration.GetSection("JwtSettings");
-            
+
             // Populate the JwtSettings object
             jwtConfigSection.Bind(jwtSetting);
 
@@ -157,11 +177,9 @@ namespace Api
 
             services.For<IConfigurationRoot>().Use(_ => _configuration);
 
-            // Register DBContext
-//             services.For<IEntityContext>().Use(entityDbContext);
-
             // StackOverFlow RestSharp client
-            services.For<IRestClient>().Use(_ => new RestClient(new Uri("https://api.stackexchange.com/")));
+            services.For<IRestClient>()
+                .Use(_ => new RestClient(new Uri(_configuration.GetValue<string>("StackOverFlowApi"))));
         }
 
         /// <summary>
