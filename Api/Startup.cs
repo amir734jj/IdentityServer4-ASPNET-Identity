@@ -59,6 +59,16 @@ namespace Api
         /// <param name="services"></param>
         public void ConfigureContainer(ServiceRegistry services)
         {
+            services.AddMiniProfiler(opt =>
+            {
+                opt.ShouldProfile = _ => true;
+                opt.ShowControls = true;
+                opt.StackMaxLength = short.MaxValue;
+                opt.PopupStartHidden = false;
+                opt.PopupShowTrivial = true;
+                opt.PopupShowTimeWithChildren = true;
+            });
+
             services.AddLogging();
 
             // If environment is localhost, then enable CORS policy, otherwise no cross-origin access
@@ -189,6 +199,9 @@ namespace Api
         /// <param name="env"></param>
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IPopulateDbLogic populateDbLogic)
         {
+            // ...existing configuration...
+            app.UseMiniProfiler();
+
             // Populate the DB if flag is set to true in appsettings.json
             if (_configuration.GetValue<bool>("PopulateDb"))
             {
