@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 using Api.Attributes;
 using Api.Configs;
 using AutoMapper;
 using AutoMapper.EntityFrameworkCore;
 using AutoMapper.EquivalencyExpression;
 using Dal;
-using Dal.Interfaces;
 using Lamar;
 using Logic;
-using Logic.PopulateDb;
 using Logic.PopulateDb.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -98,6 +95,15 @@ namespace Api
             services.AddIdentity<User, IdentityRole>(x => { x.User.RequireUniqueEmail = true; })
                 .AddEntityFrameworkStores<EntityDbContext>()
                 .AddDefaultTokenProviders();
+            
+            var jwtSetting = new JwtSettings();
+
+            var jwtConfigSection = _configuration.GetSection("JwtSettings");
+            
+            // Populate the JwtSettings object
+            jwtConfigSection.Bind(jwtSetting);
+
+            services.Configure<JwtSettings>(jwtConfigSection);
 
             services.AddAuthentication(options =>
                 {
@@ -109,17 +115,13 @@ namespace Api
                     config.RequireHttpsMetadata = false;
                     config.SaveToken = true;
 
-                    config.TokenValidationParameters = new TokenValidationParameters()
+                    config.TokenValidationParameters = new TokenValidationParameters
                     {
-                        ValidIssuer = _configuration.GetValue<string>("JwtSettings:Issuer"),
-                        ValidAudience = _configuration.GetValue<string>("JwtSettings:Issuer"),
-                        IssuerSigningKey =
-                            new SymmetricSecurityKey(
-                                Encoding.UTF8.GetBytes(_configuration.GetValue<string>("JwtSettings:Key")))
+                        ValidIssuer = jwtSetting.Issuer,
+                        ValidAudience = jwtSetting.Audience,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSetting.Key))
                     };
                 });
-
-            services.Configure<JwtSettings>(_configuration.GetSection("JwtSettings"));
 
             services.AddSignalR();
 

@@ -17,7 +17,7 @@ namespace Logic.PopulateDb
         public Task<StackOverFlowResponse> ResolveQuestions(string tag)
         {
             return _restClient.GetAsync<StackOverFlowResponse>(
-                new RestRequest("/2.2/questions?pagesize=50&site=stackoverflow&sort=votes&filter=withbody")
+                new RestRequest("/2.2/questions?pagesize=50&site=stackoverflow&sort=hot&filter=withbody")
                     .AddQueryParameter("tagged", tag)
             );
         }

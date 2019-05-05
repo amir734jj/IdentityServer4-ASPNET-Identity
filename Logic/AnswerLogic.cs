@@ -19,7 +19,11 @@ namespace Logic
         {
             await _questionLogic.Update(id, x =>
             {
-                (x.Answers ?? new List<Answer>()).Add(answer);
+                // Make sure list is not null
+                x.Answers = x.Answers ?? new List<Answer>();
+                
+                // Add the answer
+                x.Answers.Add(answer);
             });
         }
     }

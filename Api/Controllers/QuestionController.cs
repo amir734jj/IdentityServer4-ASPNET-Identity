@@ -1,17 +1,16 @@
-
-
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using Api.Abstracts;
 using Logic.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Api.Controllers
 {
     [Route("api/[controller]")]
-    public class QuestionController : AbstractBasicCrudController<Question>
+    public sealed class QuestionController : Controller
     {
         private readonly IQuestionLogic _questionLogic;
 
@@ -21,38 +20,63 @@ namespace Api.Controllers
         }
 
         [AllowAnonymous]
-        public override Task<IActionResult> Get(Guid id)
+        [HttpGet]
+        [Route("")]
+        [ProducesResponseType(typeof(List<Question>), 200)]
+        [SwaggerOperation("GetAll")]
+        public async Task<IActionResult> GetAll()
         {
-            return base.Get(id);
+            return Ok(await _questionLogic.GetAll());
         }
 
         [AllowAnonymous]
-        public override Task<IActionResult> GetAll()
+        [HttpGet]
+        [Route("{id}")]
+        [ProducesResponseType(typeof(Question), 200)]
+        [SwaggerOperation("Get")]
+        public async Task<IActionResult> Get([FromRoute] Guid id)
         {
-            return base.GetAll();
+            return Ok(await _questionLogic.Get(id));
         }
 
         [Authorize]
-        public override async Task<IActionResult> Save([FromBody] Question instance)
+        [HttpPut]
+        [Route("{id}")]
+        [ProducesResponseType(typeof(Question), 200)]
+        [SwaggerOperation("Update")]
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] Question instance)
         {
-            return await base.Save(instance);
+            return Ok(await _questionLogic.Update(id, instance));
         }
 
         [Authorize]
-        public override async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] Question instance)
+        [HttpDelete]
+        [Route("{id}")]
+        [ProducesResponseType(typeof(Question), 200)]
+        [SwaggerOperation("Delete")]
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
-            return await base.Update(id, instance);
+            return Ok(await _questionLogic.Delete(id));
         }
-
+        
         [Authorize]
-        public override async Task<IActionResult> Delete([FromRoute] Guid id)
+        [HttpPost]
+        [Route("")]
+        [ProducesResponseType(typeof(Question), 200)]
+        [SwaggerOperation("Save")]
+        public async Task<IActionResult> Save([FromBody] Question instance)
         {
-            return await base.Delete(id);
+            return Ok(await _questionLogic.Save(instance));
         }
-
-        protected override IBasicCrudLogic<Question> BasicCrudLogic()
+        
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("Search/{keyword}")]
+        [ProducesResponseType(typeof(List<Question>), 200)]
+        [SwaggerOperation("Save")]
+        public async Task<IActionResult> Save([FromRoute] string keyword)
         {
-            return _questionLogic;
+            return Ok(await _questionLogic.Search(keyword));
         }
     }
 }

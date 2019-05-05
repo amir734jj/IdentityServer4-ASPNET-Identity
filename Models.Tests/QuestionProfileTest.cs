@@ -6,14 +6,14 @@ using Xunit;
 
 namespace Models.Tests
 {
-    public class AnswerProfileTest
+    public class QuestionProfileTest
     {
         private readonly Fixture _fixture;
         private readonly IMapper _mapper;
 
-        public AnswerProfileTest()
+        public QuestionProfileTest()
         {
-            _mapper = new MapperConfiguration(opt => opt.AddProfile<AnswerProfile>()).CreateMapper();
+            _mapper = new MapperConfiguration(opt => opt.AddProfile<QuestionProfile>()).CreateMapper();
             _fixture = new Fixture();
         }
         
@@ -21,16 +21,17 @@ namespace Models.Tests
         public void Test__MapToSelf()
         {
             // Arrange
-            var answer = _fixture
-                .Build<Answer>()
-                .Without(x => x.QuestionRef)
+            var question = _fixture
+                .Build<Question>()
+                .Without(x => x.Answers)
+                .Without(x => x.Tags)
                 .Create();
 
             // Act
-            var result = _mapper.Map(answer, new Answer());
+            var result = _mapper.Map(question, new Question());
 
             // Assert
-            Assert.Equal(answer.Text, result.Text);
+            Assert.Equal(question.Text, result.Text);
         }
     }
 }
