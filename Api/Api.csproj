@@ -7,7 +7,6 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.All" />
         <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="6.0.0" />
-        <PackageReference Include="Lamar" Version="2.1.0" />
         <PackageReference Include="Lamar.Microsoft.DependencyInjection" Version="2.1.0" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="1.2.0" />
     </ItemGroup>
