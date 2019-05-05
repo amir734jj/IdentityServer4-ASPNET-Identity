@@ -5,8 +5,6 @@ using AutoFixture;
 using AutoMapper;
 using Dal.Dals;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Internal;
 using Models.Models;
 using Xunit;
 

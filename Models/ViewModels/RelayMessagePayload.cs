@@ -2,7 +2,7 @@ using System;
 
 namespace Models.Models
 {
-    public class MessagePayload
+    public class RelayMessagePayload
     {
         public string From { get; set; }
         
