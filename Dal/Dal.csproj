@@ -11,18 +11,9 @@
         <PackageReference Include="System.Data.Common" />
         <PackageReference Include="System.Data.SQLite" />
     </ItemGroup>
-
-    <PropertyGroup>
-        <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-        <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
-    </PropertyGroup>
     
     <ItemGroup>
       <ProjectReference Include="..\Models\Models.csproj" />
-    </ItemGroup>
-    
-    <ItemGroup>
-      <Folder Include="DbContext" />
     </ItemGroup>
 
 </Project>

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dal.Interfaces;
@@ -29,10 +30,12 @@ namespace Logic
         /// <returns></returns>
         public async Task<IEnumerable<Question>> Search(string keyword)
         {
+            const StringComparison stringComparisonEnum = StringComparison.OrdinalIgnoreCase;
+
             return (await GetAll())
-                .Where(x => x.Title.Contains(keyword)
-                            || x.Text.Contains(keyword)
-                            || x.Answers.Any(y => y.Text.Contains(keyword)));
+                .Where(x => x.Title.Contains(keyword, stringComparisonEnum)
+                            || x.Text.Contains(keyword, stringComparisonEnum)
+                            || x.Answers.Any(y => y.Text.Contains(keyword, stringComparisonEnum)));
         }
     }
 }
