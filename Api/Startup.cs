@@ -7,7 +7,6 @@ using AutoMapper;
 using AutoMapper.EntityFrameworkCore;
 using AutoMapper.EquivalencyExpression;
 using Dal;
-using Lamar;
 using Logic;
 using Logic.PopulateDb.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -23,6 +22,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.IdentityModel.Tokens;
 using Models.Models;
 using RestSharp;
+using StructureMap;
 using Swashbuckle.AspNetCore.Swagger;
 using static Api.Utilities.ConnectionStringUtility;
 
@@ -34,6 +34,7 @@ namespace Api
 
         // ReSharper disable once NotAccessedField.Local
         private readonly IHostingEnvironment _env;
+        private Container _container;
 
         /// <summary>
         /// Constructor
@@ -57,7 +58,7 @@ namespace Api
         /// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         /// </summary>
         /// <param name="services"></param>
-        public void ConfigureContainer(ServiceRegistry services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddMiniProfiler(opt =>
             {
@@ -107,8 +108,6 @@ namespace Api
                         throw new Exception("Invalid Environment!");
                 }
             });
-
-            services.For<EntityDbContext>().Use(entityDbContext).Transient();
 
             // All the other service configuration.
             services.AddAutoMapper(opt =>
@@ -171,25 +170,34 @@ namespace Api
                     Description = "Workshop exercise application"
                 });
             });
-
-            // Also exposes Lamar specific registrations
-            // and functionality
-            services.Scan(_ =>
+            
+            _container = new Container(opt =>
             {
-                _.TheCallingAssembly();
-                _.Assembly("Dal");
-                _.Assembly("Logic");
-                _.WithDefaultConventions();
+                // Also exposes Lamar specific registrations
+                // and functionality
+                opt.Scan(_ =>
+                {
+                    _.AssemblyContainingType(typeof(Startup));
+                    _.Assembly("Dal");
+                    _.Assembly("Logic");
+                    _.WithDefaultConventions();
+                });
+                
+                opt.Populate(services);
+
+                // Null logger for now
+                opt.For<ILoggerFactory>().Use(NullLoggerFactory.Instance);
+
+                opt.For<IConfigurationRoot>().Use(_ => _configuration);
+
+                // StackOverFlow RestSharp client
+                opt.For<IRestClient>()
+                    .Use(_ => new RestClient(new Uri(_configuration.GetValue<string>("StackOverFlowApi"))));
+                
+                opt.For<EntityDbContext>().Use(entityDbContext).Transient();                
             });
 
-            // Null logger for now
-            services.For<ILoggerFactory>().Use(NullLoggerFactory.Instance);
-
-            services.For<IConfigurationRoot>().Use(_ => _configuration);
-
-            // StackOverFlow RestSharp client
-            services.For<IRestClient>()
-                .Use(_ => new RestClient(new Uri(_configuration.GetValue<string>("StackOverFlowApi"))));
+            return _container.GetInstance<IServiceProvider>();
         }
 
         /// <summary>
@@ -197,11 +205,12 @@ namespace Api
         /// </summary>
         /// <param name="app"></param>
         /// <param name="env"></param>
+        /// <param name="populateDbLogic"></param>
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IPopulateDbLogic populateDbLogic)
         {
             // ...existing configuration...
             app.UseMiniProfiler();
-
+            
             // Populate the DB if flag is set to true in appsettings.json
             if (_configuration.GetValue<bool>("PopulateDb"))
             {

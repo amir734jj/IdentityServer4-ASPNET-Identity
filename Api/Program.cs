@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using Lamar.Microsoft.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
 
 namespace Api
@@ -13,7 +12,6 @@ namespace Api
 
             // Start Webserver
             var host = new WebHostBuilder()
-                .UseLamar()
                 .UseKestrel()
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseIISIntegration()
