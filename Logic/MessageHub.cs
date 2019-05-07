@@ -20,7 +20,7 @@ namespace Logic
 
             await Clients.All.SendAsync("Count", ConnectedIds.Count);
 
-            await Clients.All.SendAsync("Receive", new RelayMessagePayload
+            await Clients.All.SendAsync("ReceiveMessage", new RelayMessagePayload
             {
                 From = "System",
                 Text = "Welcome to the .NET workshop!",
