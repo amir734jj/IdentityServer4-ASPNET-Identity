@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Dal.Extensions;
 using Html2Markdown;
 using Logic.Interfaces;
 using Logic.PopulateDb.Interfaces;
@@ -21,14 +22,14 @@ namespace Logic.PopulateDb
 
         public async Task Populate()
         {
+            var converter = new Converter();
+
             var questions = await _stackOverFlowApiContext.ResolveQuestions("C#");
 
             var questionAnswers = questions?.Items?.ToDictionary(x => x,
                 x => _stackOverFlowApiContext.ResolveAnswers(x.QuestionId).Result.Items);
 
-            var converter = new Converter();
-
-            var tasks = questionAnswers.Select(x => _questionLogic.Save(new Question
+            questionAnswers.ForEach(x => _questionLogic.Save(new Question
             {
                 Time = DateTime.Now,
                 Title = x.Key.Title,
@@ -41,9 +42,7 @@ namespace Logic.PopulateDb
                 {
                     Text = converter.Convert(y.Body)
                 }).ToList()
-            }));
-
-            await Task.WhenAll(tasks);
+            }).Wait());
         }
     }
 }

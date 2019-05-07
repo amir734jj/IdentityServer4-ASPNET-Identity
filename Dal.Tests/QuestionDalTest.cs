@@ -20,7 +20,11 @@ namespace Dal.Tests
         {
             _fixture = new Fixture();
             _mapper = new MapperConfiguration(x => { }).CreateMapper();
-            _dbContext = new EntityDbContext(opt => opt.UseInMemoryDatabase(_fixture.Create<string>()));
+
+            var optionsBuilder = new DbContextOptionsBuilder<EntityDbContext>()
+                .UseInMemoryDatabase(_fixture.Create<string>());
+            
+            _dbContext = new EntityDbContext(optionsBuilder.Options);
         }
 
         [Fact]

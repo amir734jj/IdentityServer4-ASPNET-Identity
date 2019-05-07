@@ -1,10 +1,9 @@
-﻿using System;
+using System;
 using System.Reflection;
 using System.Text;
 using Api.Attributes;
 using Api.Configs;
 using AutoMapper;
-using AutoMapper.EntityFrameworkCore;
 using AutoMapper.EquivalencyExpression;
 using Dal;
 using Logic;
@@ -85,8 +84,19 @@ namespace Api
                     });
             });
 
-            // Initialize the DbContext
-            var entityDbContext = new EntityDbContext(opt =>
+            // All the other service configuration.
+            services.AddAutoMapper(opt =>
+            {
+                opt.AddProfiles(Assembly.Load("Models"));
+                opt.AddCollectionMappers();/*
+                opt.SetGeneratePropertyMaps(
+                    new GenerateEntityFrameworkCorePrimaryKeyPropertyMaps<EntityDbContext>());
+*/
+
+                opt.UseEntityFrameworkCoreModel<EntityDbContext>(services);
+            });
+
+            services.AddDbContext<EntityDbContext>(opt =>
             {
                 switch (_env.EnvironmentName)
                 {
@@ -108,17 +118,6 @@ namespace Api
                         throw new Exception("Invalid Environment!");
                 }
             });
-
-            // All the other service configuration.
-            services.AddAutoMapper(opt =>
-            {
-                opt.AddProfiles(Assembly.Load("Models"));
-                opt.AddCollectionMappers();
-                opt.SetGeneratePropertyMaps(
-                    new GenerateEntityFrameworkCorePrimaryKeyPropertyMaps<EntityDbContext>(entityDbContext.Model));
-            });
-
-            services.AddDbContext<EntityDbContext>();
 
             // Configure Entity Framework Identity for Auth
             services.AddIdentity<User, IdentityRole>(x => { x.User.RequireUniqueEmail = true; })
@@ -193,9 +192,15 @@ namespace Api
                 // StackOverFlow RestSharp client
                 opt.For<IRestClient>()
                     .Use(_ => new RestClient(new Uri(_configuration.GetValue<string>("StackOverFlowApi"))));
-                
-                opt.For<EntityDbContext>().Use(entityDbContext).Transient();                
+
+                opt.For<EntityDbContext>().Transient();
             });
+
+            // Validate IoC container
+            if (_env.IsDevelopment())
+            {
+                _container.AssertConfigurationIsValid();
+            }
 
             return _container.GetInstance<IServiceProvider>();
         }
