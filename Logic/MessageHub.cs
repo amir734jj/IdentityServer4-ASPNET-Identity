@@ -34,7 +34,7 @@ namespace Logic
             await Clients.All.SendAsync("ReceiveMessage", new RelayMessagePayload
             {
                 From = "System",
-                Text = $"Welcome to the .NET workshop!: {user.Fullname}",
+                Text = $"Welcome to the .NET workshop!: {user?.UserName}",
                 Time = DateTime.Now
             });
         }
