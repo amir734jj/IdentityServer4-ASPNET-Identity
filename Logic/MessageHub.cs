@@ -30,8 +30,8 @@ namespace Logic
 
             // Fetch UserInfo
             var user = await _userManager.FindByEmailAsync(Context.User.Identity.Name);
-            
-            await Clients.All.SendAsync("Receive", new RelayMessagePayload
+
+            await Clients.All.SendAsync("ReceiveMessage", new RelayMessagePayload
             {
                 From = "System",
                 Text = $"Welcome to the .NET workshop!: {user.Fullname}",
