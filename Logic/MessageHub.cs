@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Models.Models;
 using Models.ViewModels;
@@ -14,13 +13,6 @@ namespace Logic
     {
         // Connected IDs
         private static readonly HashSet<string> ConnectedIds = new HashSet<string>();
-
-        private readonly UserManager<User> _userManager;
-
-        public MessageHub(UserManager<User> userManager)
-        {
-            _userManager = userManager;
-        }
         
         public override async Task OnConnectedAsync()
         {
@@ -28,13 +20,10 @@ namespace Logic
 
             await Clients.All.SendAsync("Count", ConnectedIds.Count);
 
-            // Fetch UserInfo
-            var user = await _userManager.FindByEmailAsync(Context?.User?.Identity?.Name);
-
             await Clients.All.SendAsync("ReceiveMessage", new RelayMessagePayload
             {
                 From = "System",
-                Text = $"Welcome to the .NET workshop!: {user?.UserName}",
+                Text = "Welcome to the .NET workshop!",
                 Time = DateTime.Now
             });
         }
