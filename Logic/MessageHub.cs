@@ -29,7 +29,7 @@ namespace Logic
             await Clients.All.SendAsync("Count", ConnectedIds.Count);
 
             // Fetch UserInfo
-            var user = await _userManager.FindByEmailAsync(Context.User.Identity.Name);
+            var user = await _userManager.FindByEmailAsync(Context?.User?.Identity?.Name);
 
             await Clients.All.SendAsync("ReceiveMessage", new RelayMessagePayload
             {
