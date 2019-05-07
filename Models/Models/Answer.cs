@@ -12,7 +12,7 @@ namespace Models.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
         
-        [MaxLength(500)]
+        [Column(TypeName = "text")]
         public string Text { get; set; }
         
         [JsonIgnore]

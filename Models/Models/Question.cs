@@ -14,7 +14,7 @@ namespace Models.Models
 
         public string Title { get; set; }
 
-        [MaxLength(500)]
+        [Column(TypeName = "text")]
         public string Text { get; set; }
 
         public List<Tag> Tags { get; set; }
