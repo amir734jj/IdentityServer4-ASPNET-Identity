@@ -15,7 +15,7 @@ namespace Dal.Interfaces
         
         Task<T> Delete(Guid id);
 
-        Task<T> Update(Guid id, T instance);
+        Task<T> Update(Guid id, T dto);
 
         Task<T> Update(Guid id, Action<T> modifyAction);
     }

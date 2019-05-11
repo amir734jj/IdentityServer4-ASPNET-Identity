@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -19,7 +20,8 @@ namespace Api.Attributes
         {
             context.Result = new BadRequestObjectResult(new
             {
-                BusinessLogicErrorState = context.Exception.Message
+                context.Exception.Message,
+                Exception = context.Exception.Demystify().ToString()
             });
         }
     }

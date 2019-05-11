@@ -29,6 +29,7 @@ namespace Logic.PopulateDb
             var questionAnswers = questions?.Items?.ToDictionary(x => x,
                 x => _stackOverFlowApiContext.ResolveAnswers(x.QuestionId).Result.Items);
 
+            // Very important to wait for each task to finish as DbContext is not thread safe
             questionAnswers.ForEach(x => _questionLogic.Save(new Question
             {
                 Time = DateTime.Now,

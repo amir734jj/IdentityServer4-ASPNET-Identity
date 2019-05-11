@@ -88,11 +88,7 @@ namespace Api
             services.AddAutoMapper(opt =>
             {
                 opt.AddProfiles(Assembly.Load("Models"));
-                opt.AddCollectionMappers();/*
-                opt.SetGeneratePropertyMaps(
-                    new GenerateEntityFrameworkCorePrimaryKeyPropertyMaps<EntityDbContext>());
-*/
-
+                opt.AddCollectionMappers();
                 opt.UseEntityFrameworkCoreModel<EntityDbContext>(services);
             });
 

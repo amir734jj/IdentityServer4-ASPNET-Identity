@@ -14,6 +14,9 @@ namespace Models.Models
 
         public string Title { get; set; }
 
+        /// <summary>
+        ///     Need to set TypeName to text as Question text may be long
+        /// </summary>
         [Column(TypeName = "text")]
         public string Text { get; set; }
 

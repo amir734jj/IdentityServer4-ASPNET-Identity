@@ -5,6 +5,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Ben.Demystifier" Version="0.1.4" />
         <PackageReference Include="Microsoft.AspNetCore.All" />
         <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="6.0.0" />
         <PackageReference Include="MiniProfiler.AspNetCore.Mvc" Version="4.0.165" />

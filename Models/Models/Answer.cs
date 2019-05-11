@@ -12,6 +12,9 @@ namespace Models.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
         
+        /// <summary>
+        ///     Need to set TypeName to text as Answer text may be long
+        /// </summary>
         [Column(TypeName = "text")]
         public string Text { get; set; }
         

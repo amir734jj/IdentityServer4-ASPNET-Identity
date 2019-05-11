@@ -1,5 +1,8 @@
 namespace Models.ViewModels
 {
+    /// <summary>
+    ///     Login view model
+    /// </summary>
     public class LoginViewModel
     {
         public string Username { get; set; }

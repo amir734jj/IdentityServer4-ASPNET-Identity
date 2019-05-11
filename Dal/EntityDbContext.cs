@@ -6,10 +6,8 @@ namespace Dal
 {
     public sealed class EntityDbContext : IdentityDbContext<User>
     {
-        public EntityDbContext(DbContextOptions<EntityDbContext> optionsBuilderOptions) : base(optionsBuilderOptions)
-        {
-            
-        }
+        // ReSharper disable once SuggestBaseTypeForParameter
+        public EntityDbContext(DbContextOptions<EntityDbContext> optionsBuilderOptions) : base(optionsBuilderOptions) { }
 
         protected override void  OnModelCreating(ModelBuilder modelBuilder)
         {
