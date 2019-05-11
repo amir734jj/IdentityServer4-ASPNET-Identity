@@ -106,7 +106,7 @@ namespace Api.Controllers
         [Route("Search/{keyword}")]
         [ProducesResponseType(typeof(List<Question>), 200)]
         [SwaggerOperation("Search")]
-        public async Task<IActionResult> Save([FromRoute] string keyword)
+        public async Task<IActionResult> Save([FromQuery] string keyword)
         {
             return Ok(await _questionLogic.Search(keyword));
         }
