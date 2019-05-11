@@ -45,6 +45,41 @@ namespace Logic.Tests
         }
         
         [Fact]
+        public async Task Test__GetAll_Sort()
+        {
+            // Arrange
+            var questions = _fixture
+                .Build<Question>()
+                .Without(x => x.Tags)
+                .With(x => x.Answers, _fixture.Build<Answer>()
+                    .Without(y => y.QuestionRef)
+                    .CreateMany()
+                    .ToList())
+                .CreateMany()
+                .ToList();
+            
+            var questionDalMock = new Mock<IQuestionDal>();
+
+            questionDalMock
+                .Setup(x => x.GetAll())
+                .ReturnsAsync(questions);
+            
+            var questionLogic = new QuestionLogic(questionDalMock.Object);
+
+            // Act
+            var resultSortedByNone = await questionLogic.GetAll(SortQuestionsByEnum.None);
+            var resultSortedByVote = await questionLogic.GetAll(SortQuestionsByEnum.Vote);
+            var resultSortedByTime = await questionLogic.GetAll(SortQuestionsByEnum.Time);
+            var resultSortedByAnswers = await questionLogic.GetAll(SortQuestionsByEnum.Answers);
+
+            // Assert
+            Assert.Equal(questions, resultSortedByNone);
+            Assert.Equal(questions.OrderByDescending(x => x.Vote), resultSortedByVote);
+            Assert.Equal(questions.OrderByDescending(x => x.Time), resultSortedByTime);
+            Assert.Equal(questions.OrderByDescending(x => x.Answers.Count), resultSortedByAnswers);
+        }
+        
+        [Fact]
         public async Task Test__Get()
         {
             // Arrange

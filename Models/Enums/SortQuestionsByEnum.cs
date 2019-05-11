@@ -14,8 +14,8 @@ namespace Models.Enums
         /// Because enums start from zero
         /// </summary>
         None = 0,
-        Votes,
-        Recent,
+        Vote,
+        Time,
         Answers
     }
 }

@@ -31,9 +31,9 @@ namespace Logic
             {
                 case SortQuestionsByEnum.None:
                     return questions;
-                case SortQuestionsByEnum.Votes:
+                case SortQuestionsByEnum.Vote:
                     return questions.OrderByDescending(x => x.Vote);
-                case SortQuestionsByEnum.Recent:
+                case SortQuestionsByEnum.Time:
                     return questions.OrderByDescending(x => x.Time);
                 case SortQuestionsByEnum.Answers:
                     return questions.OrderByDescending(x => x.Answers.Count);

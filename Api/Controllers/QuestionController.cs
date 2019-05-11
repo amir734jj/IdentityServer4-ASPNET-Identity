@@ -35,6 +35,11 @@ namespace Api.Controllers
             return Ok(await _questionLogic.GetAll(sortKey));
         }
 
+        /// <summary>
+        ///     Get question by Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet]
         [Route("{id}")]
@@ -45,6 +50,12 @@ namespace Api.Controllers
             return Ok(await _questionLogic.Get(id));
         }
 
+        /// <summary>
+        ///     Update a question given Id and DTO
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="instance"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpPut]
         [Route("{id}")]
@@ -55,6 +66,11 @@ namespace Api.Controllers
             return Ok(await _questionLogic.Update(id, instance));
         }
 
+        /// <summary>
+        ///     Delete a question given Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpDelete]
         [Route("{id}")]
@@ -65,6 +81,11 @@ namespace Api.Controllers
             return Ok(await _questionLogic.Delete(id));
         }
 
+        /// <summary>
+        ///     Save a question given DTO
+        /// </summary>
+        /// <param name="instance"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpPost]
         [Route("")]
@@ -75,11 +96,16 @@ namespace Api.Controllers
             return Ok(await _questionLogic.Save(instance));
         }
 
+        /// <summary>
+        ///     Search questions given a keyword
+        /// </summary>
+        /// <param name="keyword"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet]
         [Route("Search/{keyword}")]
         [ProducesResponseType(typeof(List<Question>), 200)]
-        [SwaggerOperation("Save")]
+        [SwaggerOperation("Search")]
         public async Task<IActionResult> Save([FromRoute] string keyword)
         {
             return Ok(await _questionLogic.Search(keyword));
