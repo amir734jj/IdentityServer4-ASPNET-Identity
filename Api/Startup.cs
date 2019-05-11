@@ -33,6 +33,7 @@ namespace Api
 
         // ReSharper disable once NotAccessedField.Local
         private readonly IHostingEnvironment _env;
+
         private Container _container;
 
         /// <summary>
@@ -180,15 +181,13 @@ namespace Api
                 
                 opt.Populate(services);
 
-                // Null logger for now
-                opt.For<ILoggerFactory>().Use(NullLoggerFactory.Instance);
-
                 opt.For<IConfigurationRoot>().Use(_ => _configuration);
 
                 // StackOverFlow RestSharp client
                 opt.For<IRestClient>()
                     .Use(_ => new RestClient(new Uri(_configuration.GetValue<string>("StackOverFlowApi"))));
 
+                // Transient means fresh instance for each request
                 opt.For<EntityDbContext>().Transient();
             });
 
@@ -226,9 +225,13 @@ namespace Api
                 app.UseDatabaseErrorPage();
             }
 
+            // Use wwwroot folder as default static path
             app.UseDefaultFiles();
+            
+            // Serve static files
             app.UseStaticFiles();
 
+            // Not necessary for this workshop but useful when running behind kubernetes
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
                 // Read and use headers coming from reverse proxy: X-Forwarded-For X-Forwarded-Proto
