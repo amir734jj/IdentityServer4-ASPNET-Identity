@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Logic.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Models.Enums;
 using Models.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -19,14 +20,19 @@ namespace Api.Controllers
             _questionLogic = questionLogic;
         }
 
+        /// <summary>
+        ///     Returns all questions
+        /// </summary>
+        /// <param name="sortKey"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet]
         [Route("")]
         [ProducesResponseType(typeof(List<Question>), 200)]
         [SwaggerOperation("GetAll")]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] SortQuestionsByEnum sortKey = default)
         {
-            return Ok(await _questionLogic.GetAll());
+            return Ok(await _questionLogic.GetAll(sortKey));
         }
 
         [AllowAnonymous]
@@ -58,7 +64,7 @@ namespace Api.Controllers
         {
             return Ok(await _questionLogic.Delete(id));
         }
-        
+
         [Authorize]
         [HttpPost]
         [Route("")]
@@ -68,7 +74,7 @@ namespace Api.Controllers
         {
             return Ok(await _questionLogic.Save(instance));
         }
-        
+
         [AllowAnonymous]
         [HttpGet]
         [Route("Search/{keyword}")]

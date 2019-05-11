@@ -14,6 +14,11 @@ namespace Logic.PopulateDb
             _restClient = restClient;
         }
 
+        /// <summary>
+        ///     Given a tag, it returns StackOverFlow questions
+        /// </summary>
+        /// <param name="tag"></param>
+        /// <returns></returns>
         public Task<StackOverFlowResponse> ResolveQuestions(string tag)
         {
             return _restClient.GetAsync<StackOverFlowResponse>(
@@ -22,6 +27,11 @@ namespace Logic.PopulateDb
             );
         }
 
+        /// <summary>
+        ///     Given question Id, return all answers
+        /// </summary>
+        /// <param name="questionId"></param>
+        /// <returns></returns>
         public Task<StackOverFlowResponse> ResolveAnswers(int questionId)
         {
             return _restClient.GetAsync<StackOverFlowResponse>(new RestRequest(

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dal.Interfaces;
 using Logic.Interfaces;
+using Models.Enums;
 using Models.Models;
 
 namespace Logic
@@ -18,12 +19,27 @@ namespace Logic
         }
 
         /// <summary>
-        ///     Call forwarding
+        ///     Call forwarding and sort
         /// </summary>
+        /// <param name="sortKey"></param>
         /// <returns></returns>
-        public virtual async Task<IEnumerable<Question>> GetAll()
+        public virtual async Task<IEnumerable<Question>> GetAll(SortQuestionsByEnum sortKey)
         {
-            return await _questionDal.GetAll();
+            var questions = await _questionDal.GetAll();
+
+            switch (sortKey)
+            {
+                case SortQuestionsByEnum.None:
+                    return questions;
+                case SortQuestionsByEnum.Votes:
+                    return questions.OrderByDescending(x => x.Vote);
+                case SortQuestionsByEnum.Recent:
+                    return questions.OrderByDescending(x => x.Time);
+                case SortQuestionsByEnum.Answers:
+                    return questions.OrderByDescending(x => x.Answers.Count);
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(sortKey), sortKey, null);
+            }
         }
 
         /// <summary>
@@ -87,7 +103,7 @@ namespace Logic
         {
             const StringComparison stringComparisonEnum = StringComparison.OrdinalIgnoreCase;
 
-            return (await GetAll())
+            return (await GetAll(SortQuestionsByEnum.None))
                 .Where(x => x.Title.Contains(keyword, stringComparisonEnum)
                             || x.Text.Contains(keyword, stringComparisonEnum)
                             || x.Answers.Any(y => y.Text.Contains(keyword, stringComparisonEnum)));

@@ -165,6 +165,9 @@ namespace Api
                     Title = "dotnet-intermediate-workshop", Version = "v1",
                     Description = "Workshop exercise application"
                 });
+                
+                // In swagger, use the name of Enum instead of their integer value
+                opt.DescribeAllEnumsAsStrings();
             });
             
             _container = new Container(opt =>

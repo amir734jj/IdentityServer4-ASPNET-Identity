@@ -12,6 +12,7 @@ namespace Logic.PopulateDb
     public class PopulateDbLogic : IPopulateDbLogic
     {
         private readonly IStackOverFlowApiContext _stackOverFlowApiContext;
+
         private readonly IQuestionLogic _questionLogic;
 
         public PopulateDbLogic(IStackOverFlowApiContext stackOverFlowApiContext, IQuestionLogic questionLogic)
@@ -20,6 +21,10 @@ namespace Logic.PopulateDb
             _questionLogic = questionLogic;
         }
 
+        /// <summary>
+        ///     Populates the database
+        /// </summary>
+        /// <returns></returns>
         public async Task Populate()
         {
             var converter = new Converter();

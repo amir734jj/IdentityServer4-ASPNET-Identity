@@ -135,6 +135,10 @@ namespace Dal.Dals
             return null;
         }
 
+        /// <summary>
+        ///     Eager load Tags and Answers properties
+        /// </summary>
+        /// <returns></returns>
         private IQueryable<Question> DbSetInclude()
         {
             return _dbSet
@@ -144,6 +148,7 @@ namespace Dal.Dals
 
         /// <summary>
         ///     Manual updating of Entity from DTO (data transfer object)
+        ///     Generally this approach is not recommended, using AutoMapper is much simpler and less prone to error
         /// </summary>
         /// <param name="entity"></param>
         /// <param name="dto"></param>

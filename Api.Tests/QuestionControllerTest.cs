@@ -6,6 +6,7 @@ using Api.Controllers;
 using AutoFixture;
 using Logic.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Models.Enums;
 using Models.Models;
 using Moq;
 using Xunit;
@@ -35,13 +36,13 @@ namespace Api.Tests
             var questionLogicMock = new Mock<IQuestionLogic>();
 
             questionLogicMock
-                .Setup(x => x.GetAll())
+                .Setup(x => x.GetAll(It.IsAny<SortQuestionsByEnum>()))
                 .ReturnsAsync(questions);
             
             var questionController = new QuestionController(questionLogicMock.Object);
 
             // Act
-            var result = await questionController.GetAll();
+            var result = await questionController.GetAll(default(SortQuestionsByEnum));
 
             // Assert
             var okObjectResult = Assert.IsType<OkObjectResult>(result);

@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Models.Enums;
 
 namespace Logic.Interfaces
 {
     public interface IBasicCrudLogic<T>
     {
-        Task<IEnumerable<T>> GetAll();
+        Task<IEnumerable<T>> GetAll(SortQuestionsByEnum sortKey);
 
         Task<T> Get(Guid id);
 

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
 using Dal.Interfaces;
+using Models.Enums;
 using Models.Models;
 using Moq;
 using Xunit;
@@ -37,7 +38,7 @@ namespace Logic.Tests
             var questionLogic = new QuestionLogic(questionDalMock.Object);
 
             // Act
-            var result = await questionLogic.GetAll();
+            var result = await questionLogic.GetAll(default(SortQuestionsByEnum));
 
             // Assert
             Assert.Equal(questions, result);
