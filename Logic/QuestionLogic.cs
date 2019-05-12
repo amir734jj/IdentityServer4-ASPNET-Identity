@@ -11,11 +11,9 @@ namespace Logic
 {
     public class QuestionLogic : IQuestionLogic
     {
-        private readonly IQuestionDal _questionDal;
-
         public QuestionLogic(IQuestionDal questionDal)
         {
-            _questionDal = questionDal;
+            // TODO: hold on to questionDal as a class property
         }
 
         /// <summary>
@@ -25,21 +23,8 @@ namespace Logic
         /// <returns></returns>
         public virtual async Task<IEnumerable<Question>> GetAll(SortQuestionsByEnum sortKey)
         {
-            var questions = await _questionDal.GetAll();
-
-            switch (sortKey)
-            {
-                case SortQuestionsByEnum.None:
-                    return questions;
-                case SortQuestionsByEnum.Vote:
-                    return questions.OrderByDescending(x => x.Vote);
-                case SortQuestionsByEnum.Time:
-                    return questions.OrderByDescending(x => x.Time);
-                case SortQuestionsByEnum.Answers:
-                    return questions.OrderByDescending(x => x.Answers.Count);
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(sortKey), sortKey, null);
-            }
+            // TODO: call the DAL layer and sort result
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -49,7 +34,8 @@ namespace Logic
         /// <returns></returns>
         public virtual async Task<Question> Get(Guid id)
         {
-            return await _questionDal.Get(id);
+            // TODO: call the DAL layer
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -59,10 +45,8 @@ namespace Logic
         /// <returns></returns>
         public virtual async Task<Question> Save(Question instance)
         {
-            // Set time to now
-            instance.Time = DateTime.Now;
-
-            return await _questionDal.Save(instance);
+            // TODO: 1) call the DAL layer and 2) set time property to now
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -72,7 +56,8 @@ namespace Logic
         /// <returns></returns>
         public virtual async Task<Question> Delete(Guid id)
         {
-            return await _questionDal.Delete(id);
+            // TODO: call the DAL layer
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -83,10 +68,8 @@ namespace Logic
         /// <returns></returns>
         public virtual async Task<Question> Update(Guid id, Question updatedInstance)
         {
-            // Set time to now
-            updatedInstance.Time = DateTime.Now;
-
-            return await _questionDal.Update(id, updatedInstance);
+            // TODO: 1) call the DAL layer and 2) set time property to now
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -97,7 +80,8 @@ namespace Logic
         /// <returns></returns>
         public virtual async Task<Question> Update(Guid id, Action<Question> modifyAction)
         {
-            return await _questionDal.Update(id, modifyAction);
+            // TODO: call the DAL layer
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -107,19 +91,12 @@ namespace Logic
         /// <returns></returns>
         public async Task<IEnumerable<Question>> Search(string keyword)
         {
-            const StringComparison stringComparisonEnum = StringComparison.OrdinalIgnoreCase;
-
-            // Search:
+            // TODO: Search within the following properties looking for keyword
             //    1) Title
             //    2) Text
             //    3) Answers
             //    4) Tags
-            return (await GetAll(SortQuestionsByEnum.None))
-                .Where(x => x.Title.Contains(keyword, stringComparisonEnum)
-                            || x.Text.Contains(keyword, stringComparisonEnum)
-                            || x.Answers.Any(y => y.Text.Contains(keyword, stringComparisonEnum))
-                            || x.Tags.Any(y => y.Text.Contains(keyword, stringComparisonEnum))
-                );
+            throw new NotImplementedException();
         }
     }
 }

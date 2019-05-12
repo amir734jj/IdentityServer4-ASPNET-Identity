@@ -8,11 +8,9 @@ namespace Logic
 {
     public class AnswerLogic : IAnswerLogic
     {
-        private readonly IQuestionLogic _questionLogic;
-
         public AnswerLogic(IQuestionLogic questionLogic)
         {
-            _questionLogic = questionLogic;
+            // TODO: hold on to questionLogic as a class property
         }
         
         /// <summary>
@@ -23,14 +21,8 @@ namespace Logic
         /// <returns></returns>
         public async Task SubmitAnswer(Guid id, Answer answer)
         {
-            await _questionLogic.Update(id, x =>
-            {
-                // Make sure list is not null
-                x.Answers = x.Answers ?? new List<Answer>();
-                
-                // Add the answer
-                x.Answers.Add(answer);
-            });
+            // TODO: add answer to question with Id = id
+            // NOTE: question.Answer may be null so initialize it if it is not already initialized
         }
     }
 }

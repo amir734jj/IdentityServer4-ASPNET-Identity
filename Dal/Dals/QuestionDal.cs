@@ -31,6 +31,8 @@ namespace Dal.Dals
         /// <returns></returns>
         public virtual async Task<IEnumerable<Question>> GetAll()
         {
+            // TODO: get all entities
+            // NOTE: make sure to use DbSetInclude() method or eager load properties
             return await DbSetInclude().ToListAsync();
         }
 
@@ -41,7 +43,9 @@ namespace Dal.Dals
         /// <returns></returns>
         public virtual async Task<Question> Get(Guid id)
         {
-            return await DbSetInclude().FirstOrDefaultAsync(x => x.Id == id);
+            // TODO: get entity with Id = id
+            // NOTE: make sure to use DbSetInclude() method or eager load properties
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -51,11 +55,8 @@ namespace Dal.Dals
         /// <returns></returns>
         public virtual async Task<Question> Save(Question instance)
         {
-            await _dbSet.AddAsync(instance);
-            
-            await _dbContext.SaveChangesAsync();
-                        
-            return instance;
+            // TODO: delete entity with Id = id and SaveChanges
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -65,18 +66,8 @@ namespace Dal.Dals
         /// <returns></returns>
         public virtual async Task<Question> Delete(Guid id)
         {
-            var entity = await Get(id);
-
-            if (entity != null)
-            {
-                _dbSet.Remove(entity);
-
-                await _dbContext.SaveChangesAsync();
-
-                return entity;
-            }
-
-            return null;
+            // TODO: delete entity with Id = id and SaveChanges
+            throw new NotImplementedException();
         }
 
         /// <summary>

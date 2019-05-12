@@ -6,11 +6,9 @@ namespace Logic
 {
     public class VoteLogic : IVoteLogic
     {
-        private readonly IQuestionLogic _questionLogic;
-
         public VoteLogic(IQuestionLogic questionLogic)
         {
-            _questionLogic = questionLogic;
+            // TODO: hold on to questionLogic as a class property
         }
         
         /// <summary>
@@ -20,10 +18,8 @@ namespace Logic
         /// <returns></returns>
         public async Task UpVote(Guid id)
         {
-            await _questionLogic.Update(id, x =>
-            {
-                x.Vote++;
-            });
+            // TODO: UpVote question with Id = id
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -33,10 +29,8 @@ namespace Logic
         /// <returns></returns>
         public async Task DownVote(Guid id)
         {
-            await _questionLogic.Update(id, x =>
-            {
-                x.Vote--;
-            });
+            // TODO: DownVote question with Id = id
+            throw new NotImplementedException();
         }
     }
 }

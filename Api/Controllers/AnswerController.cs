@@ -12,11 +12,9 @@ namespace Api.Controllers
     [Route("api/[controller]")]
     public class AnswerController : Controller
     {
-        private readonly IAnswerLogic _answerLogic;
-
         public AnswerController(IAnswerLogic answerLogic)
         {
-            _answerLogic = answerLogic;
+            // TODO: hold on to answerLogic as a class property
         }
 
         [HttpPost]
@@ -24,9 +22,8 @@ namespace Api.Controllers
         [SwaggerOperation("SubmitAnswer")]
         public async Task<IActionResult> SubmitAnswer([FromRoute] Guid id, [FromBody] Answer answer)
         {
-            await _answerLogic.SubmitAnswer(id, answer);
-
-            return Ok("Updated");
+            // TODO: Call the logic layer and return Ok response
+            throw new NotImplementedException();
         }
     }
 }
