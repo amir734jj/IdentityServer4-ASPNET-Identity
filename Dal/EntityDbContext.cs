@@ -16,10 +16,7 @@ namespace Dal
                 .WithOne(x => x.QuestionRef)
                 .OnDelete(DeleteBehavior.Cascade);
             
-            modelBuilder.Entity<Question>()
-                .HasMany(x => x.Answers)
-                .WithOne(x => x.QuestionRef)
-                .OnDelete(DeleteBehavior.Cascade);
+            // TODO: setup the same relationship (one-to-many) for Question.Answers
             
             base.OnModelCreating(modelBuilder);
         }

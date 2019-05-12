@@ -21,12 +21,10 @@ namespace Logic.Tests
         public async Task Test__UpVote()
         {
             // Arrange
-            var question = _fixture
-                .Build<Question>()
-                .Without(x => x.Answers)
-                .Without(x => x.Tags)
-                .Create();
+            // TODO: create a single Question using AutoFixture
+            Question question = null;
 
+            // Hold on to current vote count
             var currentVote = question.Vote;
             
             var questionLogicMock = new Mock<IQuestionLogic>();
@@ -34,7 +32,12 @@ namespace Logic.Tests
             questionLogicMock
                 .Setup(x => x.Update(It.IsAny<Guid>(), It.IsAny<Action<Question>>()))
                 .ReturnsAsync((Guid x, Action<Question> _) => question)
-                .Callback((Guid x, Action<Question> action) => { action(question); });
+                .Callback((Guid x, Action<Question> action) =>
+                {
+                    // TODO: apply action on `question` variable
+                    // NOTE: action is a anonymous method with void return type and in this case we expect
+                    // it increases the vote count of it's argument by 1
+                });
 
             var voteLogic = new VoteLogic(questionLogicMock.Object);
             
