@@ -42,7 +42,7 @@ namespace Api.Tests
             var questionController = new QuestionController(questionLogicMock.Object);
 
             // Act
-            var result = await questionController.GetAll(default(SortQuestionsByEnum));
+            var result = await questionController.GetAll();
 
             // Assert
             var okObjectResult = Assert.IsType<OkObjectResult>(result);
