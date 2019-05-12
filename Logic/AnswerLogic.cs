@@ -15,6 +15,12 @@ namespace Logic
             _questionLogic = questionLogic;
         }
         
+        /// <summary>
+        ///     Add answer to question with Id = id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="answer"></param>
+        /// <returns></returns>
         public async Task SubmitAnswer(Guid id, Answer answer)
         {
             await _questionLogic.Update(id, x =>
