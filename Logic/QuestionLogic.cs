@@ -59,6 +59,9 @@ namespace Logic
         /// <returns></returns>
         public virtual async Task<Question> Save(Question instance)
         {
+            // Set time to now
+            instance.Time = DateTime.Now;
+
             return await _questionDal.Save(instance);
         }
 
@@ -80,6 +83,9 @@ namespace Logic
         /// <returns></returns>
         public virtual async Task<Question> Update(Guid id, Question updatedInstance)
         {
+            // Set time to now
+            updatedInstance.Time = DateTime.Now;
+
             return await _questionDal.Update(id, updatedInstance);
         }
 
@@ -103,10 +109,17 @@ namespace Logic
         {
             const StringComparison stringComparisonEnum = StringComparison.OrdinalIgnoreCase;
 
+            // Search:
+            //    1) Title
+            //    2) Text
+            //    3) Answers
+            //    4) Tags
             return (await GetAll(SortQuestionsByEnum.None))
                 .Where(x => x.Title.Contains(keyword, stringComparisonEnum)
                             || x.Text.Contains(keyword, stringComparisonEnum)
-                            || x.Answers.Any(y => y.Text.Contains(keyword, stringComparisonEnum)));
+                            || x.Answers.Any(y => y.Text.Contains(keyword, stringComparisonEnum))
+                            || x.Tags.Any(y => y.Text.Contains(keyword, stringComparisonEnum))
+                );
         }
     }
 }
