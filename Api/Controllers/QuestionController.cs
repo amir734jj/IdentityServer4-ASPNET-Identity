@@ -103,7 +103,7 @@ namespace Api.Controllers
         /// <returns></returns>
         [AllowAnonymous]
         [HttpGet]
-        [Route("Search/{keyword}")]
+        [Route("Search")]
         [ProducesResponseType(typeof(List<Question>), 200)]
         [SwaggerOperation("Search")]
         public async Task<IActionResult> Save([FromQuery] string keyword)
