@@ -13,6 +13,11 @@ namespace Logic
             _questionLogic = questionLogic;
         }
         
+        /// <summary>
+        ///     UpVote question with Id = id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task UpVote(Guid id)
         {
             await _questionLogic.Update(id, x =>
@@ -21,6 +26,11 @@ namespace Logic
             });
         }
 
+        /// <summary>
+        ///     DownVote question with Id = id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task DownVote(Guid id)
         {
             await _questionLogic.Update(id, x =>

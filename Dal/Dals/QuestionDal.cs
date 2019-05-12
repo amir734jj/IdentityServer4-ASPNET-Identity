@@ -67,15 +67,15 @@ namespace Dal.Dals
         /// <returns></returns>
         public virtual async Task<Question> Delete(Guid id)
         {
-            var instance = await Get(id);
+            var entity = await Get(id);
 
-            if (instance != null)
+            if (entity != null)
             {
-                _dbSet.Remove(instance);
+                _dbSet.Remove(entity);
 
                 await _dbContext.SaveChangesAsync();
 
-                return instance;
+                return entity;
             }
 
             return null;
