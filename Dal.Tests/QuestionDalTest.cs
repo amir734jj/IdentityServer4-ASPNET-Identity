@@ -31,11 +31,8 @@ namespace Dal.Tests
         public async Task Test__Save()
         {
             // Arrange
-            var question = _fixture
-                .Build<Question>()
-                .Without(x => x.Answers)
-                .Without(x => x.Tags)
-                .Create();
+            // TODO: create a single Question using AutoFixture
+            Question question = null;
 
             var questionDal = new QuestionDal(_dbContext, _mapper);
 
@@ -43,8 +40,8 @@ namespace Dal.Tests
             var result = await questionDal.Save(question);
 
             // Assert
-            Assert.Single(_dbContext.Questions);
-            Assert.Equal(question, result);
+            // TODO: assert _dbContext.Questions contains only a single element
+            // TODO: assert result == question
         }
 
         [Fact]

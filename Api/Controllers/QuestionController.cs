@@ -13,11 +13,9 @@ namespace Api.Controllers
     [Route("api/[controller]")]
     public sealed class QuestionController : Controller
     {
-        private readonly IQuestionLogic _questionLogic;
-
         public QuestionController(IQuestionLogic questionLogic)
         {
-            _questionLogic = questionLogic;
+            // TODO: hold on to questionLogic as a class property
         }
 
         /// <summary>
@@ -32,7 +30,8 @@ namespace Api.Controllers
         [SwaggerOperation("GetAll")]
         public async Task<IActionResult> GetAll([FromQuery] SortQuestionsByEnum sortKey = default)
         {
-            return Ok(await _questionLogic.GetAll(sortKey));
+            // TODO: call logic layer
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -47,7 +46,8 @@ namespace Api.Controllers
         [SwaggerOperation("Get")]
         public async Task<IActionResult> Get([FromRoute] Guid id)
         {
-            return Ok(await _questionLogic.Get(id));
+            // TODO: call logic layer
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -63,7 +63,8 @@ namespace Api.Controllers
         [SwaggerOperation("Update")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] Question instance)
         {
-            return Ok(await _questionLogic.Update(id, instance));
+            // TODO: call logic layer
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -78,7 +79,8 @@ namespace Api.Controllers
         [SwaggerOperation("Delete")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
-            return Ok(await _questionLogic.Delete(id));
+            // TODO: call logic layer
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -93,7 +95,8 @@ namespace Api.Controllers
         [SwaggerOperation("Save")]
         public async Task<IActionResult> Save([FromBody] Question instance)
         {
-            return Ok(await _questionLogic.Save(instance));
+            // TODO: call logic layer
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -103,12 +106,13 @@ namespace Api.Controllers
         /// <returns></returns>
         [AllowAnonymous]
         [HttpGet]
-        [Route("Search/{keyword}")]
+        [Route("Search")]
         [ProducesResponseType(typeof(List<Question>), 200)]
         [SwaggerOperation("Search")]
         public async Task<IActionResult> Save([FromQuery] string keyword)
         {
-            return Ok(await _questionLogic.Search(keyword));
+            // TODO: call logic layer
+            throw new NotImplementedException();
         }
     }
 }

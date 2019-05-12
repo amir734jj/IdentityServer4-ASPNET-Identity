@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
@@ -23,17 +24,11 @@ namespace Logic.Tests
         public async Task Test__GetAll()
         {
             // Arrange
-            var questions = _fixture
-                .Build<Question>()
-                .Without(x => x.Answers)
-                .Without(x => x.Tags)
-                .CreateMany();
-            
-            var questionDalMock = new Mock<IQuestionDal>();
+            // TODO: create list of Questions using AutoFixture
+            List<Question> questions = null;
 
-            questionDalMock
-                .Setup(x => x.GetAll())
-                .ReturnsAsync(questions);
+            // TODO: mock IQuestionDal and setup method GetAll to return `questions`
+            Mock<IQuestionDal> questionDalMock = null;
             
             var questionLogic = new QuestionLogic(questionDalMock.Object);
 
@@ -41,7 +36,7 @@ namespace Logic.Tests
             var result = await questionLogic.GetAll(default(SortQuestionsByEnum));
 
             // Assert
-            Assert.Equal(questions, result);
+            // TODO: assert questions == result
         }
         
         [Fact]

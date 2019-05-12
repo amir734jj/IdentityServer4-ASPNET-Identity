@@ -11,11 +11,9 @@ namespace Api.Controllers
     [Route("api/[controller]")]
     public class VoteController : Controller
     {
-        private readonly IVoteLogic _voteLogic;
-
         public VoteController(IVoteLogic voteLogic)
         {
-            _voteLogic = voteLogic;
+            // TODO: hold on to voteLogic as a class property
         }
         
         [HttpPost]
@@ -23,9 +21,8 @@ namespace Api.Controllers
         [SwaggerOperation("UpVote")]
         public async Task<IActionResult> UpVote([FromRoute] Guid id)
         {
-            await _voteLogic.UpVote(id);
-                
-            return Ok($"UpVoted question with id: {id}");
+            // TODO: Call the logic layer and return Ok response
+            throw new NotImplementedException();
         }
         
         [HttpPost]
@@ -33,9 +30,8 @@ namespace Api.Controllers
         [SwaggerOperation("DownVote")]
         public async Task<IActionResult> DownVote([FromRoute] Guid id)
         {
-            await _voteLogic.DownVote(id);
-                
-            return Ok($"DownVote question with id: {id}");
+            // TODO: Call the logic layer and return Ok response
+            throw new NotImplementedException();
         }
     }
 }

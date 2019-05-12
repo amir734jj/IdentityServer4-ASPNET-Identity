@@ -33,7 +33,7 @@ namespace Dal.Dals
         {
             // TODO: get all entities
             // NOTE: make sure to use DbSetInclude() method or eager load properties
-            return await DbSetInclude().ToListAsync();
+            throw new NotImplementedException();
         }
 
         /// <summary>

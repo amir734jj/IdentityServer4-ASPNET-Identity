@@ -20,12 +20,14 @@ namespace Logic
 
             await Clients.All.SendAsync("Count", ConnectedIds.Count);
 
-            await Clients.All.SendAsync("ReceiveMessage", new RelayMessagePayload
+            var payload = new RelayMessagePayload
             {
                 From = "System",
                 Text = "Welcome to the .NET workshop!",
                 Time = DateTime.Now
-            });
+            };
+            
+            // TODO: send payload to `ReceiveMessage` method of all connected clients
         }
 
         public override async Task OnDisconnectedAsync(Exception ex)
@@ -49,7 +51,7 @@ namespace Logic
                 Time = DateTime.Now
             };
             
-            await Clients.All.SendAsync("ReceiveMessage", payload);
+            // TODO: send payload to `ReceiveMessage` method of all connected clients
         }
     }
 }
