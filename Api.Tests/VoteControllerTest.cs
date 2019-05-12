@@ -35,15 +35,19 @@ namespace Api.Tests
             voteLogicMock
                 .Setup(x => x.UpVote(It.IsAny<Guid>()))
                 .Returns(Task.CompletedTask)
-                .Callback((Guid _) => { flag = true; });
+                .Callback((Guid _) =>
+                {
+                    // TODO: set flag to true here
+                });
 
-            var voteController = new VoteController(voteLogicMock.Object);
+            // TODO: create instance of VoteController using `voteLogicMock` as dependency
+            VoteController voteController = null;
 
             // Act
             await voteController.UpVote(question.Id);
 
             // Assert
-            Assert.True(flag);
+            // TODO: assert flag is true
         }
         
         [Fact]
