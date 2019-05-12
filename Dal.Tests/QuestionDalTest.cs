@@ -6,6 +6,7 @@ using AutoMapper;
 using Dal.Dals;
 using Microsoft.EntityFrameworkCore;
 using Models.Models;
+using Models.Profiles;
 using Xunit;
 
 namespace Dal.Tests
@@ -19,7 +20,12 @@ namespace Dal.Tests
         public QuestionDalTest()
         {
             _fixture = new Fixture();
-            _mapper = new MapperConfiguration(x => { }).CreateMapper();
+            _mapper = new MapperConfiguration(opt =>
+            {
+                opt.AddProfile<QuestionProfile>();
+                opt.AddProfile<AnswerProfile>();
+                opt.AddProfile<TagProfile>();
+            }).CreateMapper();
 
             var optionsBuilder = new DbContextOptionsBuilder<EntityDbContext>()
                 .UseInMemoryDatabase(_fixture.Create<string>());
