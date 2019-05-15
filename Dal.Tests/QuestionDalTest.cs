@@ -13,6 +13,7 @@ namespace Dal.Tests
 {
     public class QuestionDalTest : IDisposable
     {
+        // The fixture will allow us to easily create data in the arrange part of our tests
         private readonly Fixture _fixture;
         private readonly IMapper _mapper;
         private readonly EntityDbContext _dbContext;
@@ -37,7 +38,7 @@ namespace Dal.Tests
         public async Task Test__Save()
         {
             // Arrange
-            // TODO: create a single Question using AutoFixture
+            // TODO: create a single Question using AutoFixture by replacing the null question below
             Question question = null;
 
             var questionDal = new QuestionDal(_dbContext, _mapper);

@@ -11,6 +11,7 @@ namespace Logic
         public AnswerLogic(IQuestionLogic questionLogic)
         {
             // TODO: hold on to questionLogic as a class property
+            // NOTE: Consider using construction injection here with a local private variable
         }
         
         /// <summary>
@@ -23,6 +24,8 @@ namespace Logic
         {
             // TODO: add answer to question with Id = id
             // NOTE: question.Answer may be null so initialize it if it is not already initialized
+            // you might want to start with question logic before finishing this method
+            // To note answer is a part of the question class
         }
     }
 }
