@@ -6,7 +6,6 @@ namespace Dal
 {
     public sealed class EntityDbContext : IdentityDbContext<User>
     {
-        // ReSharper disable once SuggestBaseTypeForParameter
         public EntityDbContext(DbContextOptions<EntityDbContext> optionsBuilderOptions) : base(optionsBuilderOptions) { }
 
         protected override void  OnModelCreating(ModelBuilder modelBuilder)
@@ -16,7 +15,9 @@ namespace Dal
                 .WithOne(x => x.QuestionRef)
                 .OnDelete(DeleteBehavior.Cascade);
             
-            // TODO: setup the same relationship (one-to-many) for Question.Answers
+            // TODO: Look at the models project and find the question collection,
+            // entity framework requires a one to many relationship to be registered
+            // setup the same relationship (one-to-many) for Question.Answers here
             
             base.OnModelCreating(modelBuilder);
         }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Dal.Interfaces;
 using Logic.Interfaces;
@@ -24,6 +23,7 @@ namespace Logic
         public virtual async Task<IEnumerable<Question>> GetAll(SortQuestionsByEnum sortKey)
         {
             // TODO: call the DAL layer and sort result
+            // NOTE: since the call is async ensure you do not block the thread or cause locking
             throw new NotImplementedException();
         }
 

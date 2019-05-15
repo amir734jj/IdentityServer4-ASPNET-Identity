@@ -55,7 +55,8 @@ namespace Dal.Dals
         /// <returns></returns>
         public virtual async Task<Question> Save(Question instance)
         {
-            // TODO: delete entity with Id = id and SaveChanges
+            // TODO: save entity and return the saved entity
+            // hint you need to use both the dbset and the context to save
             throw new NotImplementedException();
         }
 
@@ -66,7 +67,8 @@ namespace Dal.Dals
         /// <returns></returns>
         public virtual async Task<Question> Delete(Guid id)
         {
-            // TODO: delete entity with Id = id and SaveChanges
+            // TODO: find the entity to be deleted by id
+            // TODO: delete entity and SaveChanges
             throw new NotImplementedException();
         }
 
