@@ -34,9 +34,12 @@ namespace Api.Controllers
         [SwaggerOperation("AccountInfo")]
         public async Task<IActionResult> Index()
         {
-            return User.Identity.IsAuthenticated
-                ? Ok(await _userManager.FindByEmailAsync(User.Identity.Name))
-                : Ok(new object());
+            if (User.Identity.IsAuthenticated)
+            {
+                return Ok(await _userManager.FindByEmailAsync(User.Identity.Name));
+            }
+
+            return Unauthorized();
         }
 
         [HttpGet]
@@ -127,7 +130,7 @@ namespace Api.Controllers
         [SwaggerOperation("Forbidden")]
         public async Task<IActionResult> Forbidden()
         {
-            return Ok("Forbidden");
+            return Forbid("Please register first!");
         }
     }
 }
